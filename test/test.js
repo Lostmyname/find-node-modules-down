@@ -9,6 +9,7 @@ test('find-node-modules-down', function (t) {
 
 	var n = 'node_modules'; // i cba to type this so much
 
+	console.log(findModulesDown('test'));
 	t.deepEquals(findModulesDown('test'), [
 		'test/' + n, 'test/something/' + n, 'test/something/' + n + '/' + n
 	]);

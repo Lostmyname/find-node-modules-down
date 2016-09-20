@@ -1,29 +1,14 @@
-'use strict';
-
-var fs = require('graceful-fs');
-var path = require('path');
+var glob = require('glob');
 var _ = require('lodash');
-var isDir = require('is-directory');
+var path = require('path');
 
-function findModulesDown(dirPath) {
-	if (!_.isString(dirPath)) {
-		dirPath = '.';
-	}
-
-	return _(fs.readdirSync(dirPath))
-		.map(_.partial(_.ary(path.join, 2), dirPath)) // Get full path
-		.filter(isDir)
-		.map(function (child) {
-			var modulesDown = findModulesDown(child);
-
-			if (path.basename(child) === 'node_modules') {
-				modulesDown.unshift(path.join(child));
-			}
-
-			return modulesDown;
+module.exports = function(base) {
+  base = base || '.';
+	return _.chain(glob.sync(path.join(base, '**/node_modules/**'), {}))
+		.filter(function (path) {
+			return /node_modules$/.test(path);
 		})
-		.flattenDeep()
 		.value();
-}
+};
 
-module.exports = findModulesDown;
+
